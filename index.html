@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch with Rectangle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0A1F44; /* Dark Blue Background */
+            color: white;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .navbar {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px; /* Space between buttons */
+        }
+
+        .navbar button {
+            font-size: 22px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .navbar #stopwatchBtn {
+            background-color: #28a745; /* Green for Stopwatch */
+        }
+
+        .navbar #savedLapsBtn {
+            background-color: #007bff; /* Blue for Saved Laps */
+        }
+
+        .navbar #aboutBtn {
+            background-color: #ffc107; /* Yellow for About */
+        }
+
+        .rectangle {
+            width: 600px; /* Adjust width as needed */
+            height: 200px; /* Adjust height as needed */
+            border: 10px solid transparent; /* Set a border if needed */
+            border-radius: 15px; /* Rounded corners */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: linear-gradient(135deg, #ff595e, #ffca3a, #8ac926, #1982c4, #6a4c93); /* Gradient background */
+            margin-bottom: 20px;
+        }
+
+        #display {
+            font-size: 60px;
+            font-weight: bold;
+            color: black; /* Black color for the time display */
+            letter-spacing: 2px;
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+        .buttons button {
+            margin: 10px 15px;
+            padding: 15px 30px;
+            font-size: 24px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        #startPause {
+            background-color: #28a745; /* Green for Start/Pause */
+        }
+
+        #reset {
+            background-color: #dc3545; /* Red for Reset */
+        }
+
+        #lap {
+            background-color: #007bff; /* Blue for +Lap */
+        }
+
+        #clearLaps {
+            background-color: #ffc107; /* Yellow for Clear Laps */
+        }
+
+        .buttons button:hover {
+            opacity: 0.85;
+        }
+
+        .laps {
+            margin-top: 40px;
+            width: 80%;
+            overflow-y: auto;
+            max-height: 300px; /* Fixes height for lap list to prevent shrinking */
+        }
+
+        table {
+            width: 100%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            font-size: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid white;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        /* Updated colors for the header */
+        th.lap {
+            background-color: #ffca3a; /* Yellow for Lap */
+            color: black;
+        }
+
+        th.totalTime {
+            background-color: #28a745; /* Green for Total Time */
+            color: white;
+        }
+
+        th.lapTime {
+            background-color: #007bff; /* Blue for Lap Time */
+            color: white;
+        }
+
+        .lapCell {
+            background-color: #ffca3a; /* Yellow for Lap Number */
+            color: black;
+        }
+
+        .totalTime {
+            background-color: #28a745; /* Green for Total Time */
+            color: white;
+        }
+
+        .lapTime {
+            background-color: #007bff; /* Blue for Lap Time */
+            color: white;
+        }
+
+        #saveLaps {
+            margin-top: 10px;
+            padding: 15px 30px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        #saveLaps:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <button id="stopwatchBtn" class="active">Stopwatch</button>
+        <button id="savedLapsBtn">Saved Laps</button>
+        <button id="aboutBtn">About</button>
+    </div>
+
+    <div class="rectangle">
+        <div id="display">00:00:000</div>
+    </div>
+
+    <div class="buttons">
+        <button id="startPause">Start</button>
+        <button id="reset">Reset</button>
+        <button id="lap">+Lap</button>
+        <button id="clearLaps">Clear Laps</button>
+    </div>
+
+    <div class="laps">
+        <table id="lapsTable">
+            <thead>
+                <tr>
+                    <th class="lap">Lap</th>
+                    <th class="totalTime">Total Time</th>
+                    <th class="lapTime">Lap Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Lap times will be inserted here dynamically -->
+            </tbody>
+        </table>
+        <button id="saveLaps">Save Laps</button>
+    </div>
+
+    <script>
+        let timer;
+        let startTime;
+        let elapsedTime = 0;
+        let isRunning = false;
+        let lapTimes = JSON.parse(localStorage.getItem('lapTimes')) || [];
+        const display = document.getElementById('display');
+        const startPauseButton = document.getElementById('startPause');
+        const lapButton = document.getElementById('lap');
+        const resetButton = document.getElementById('reset');
+        const clearLapsButton = document.getElementById('clearLaps');
+        const lapsTable = document.getElementById('lapsTable').getElementsByTagName('tbody')[0];
+
+        // Function to start or pause the stopwatch
+        function startPauseStopwatch() {
+            if (!isRunning) {
+                startTime = Date.now() - elapsedTime;
+                timer = setInterval(updateDisplay, 10);
+                isRunning = true;
+                startPauseButton.textContent = 'Pause';
+            } else {
+                clearInterval(timer);
+                isRunning = false;
+                startPauseButton.textContent = 'Start';
+            }
+        }
+
+        // Function to reset the stopwatch
+        function resetStopwatch() {
+            clearInterval(timer);
+            elapsedTime = 0;
+            isRunning = false;
+            display.textContent = '00:00:000'; // Reset display to 00:00:000
+            startPauseButton.textContent = 'Start'; // Reset button text
+            clearLaps(); // Clear laps when reset
+            localStorage.removeItem('lapTimes'); // Remove lap times from localStorage
+        }
+
+        // Function to update the display
+        function updateDisplay() {
+            elapsedTime = Date.now() - startTime;
+            displayMilliseconds = Math.floor(elapsedTime % 1000);
+            displaySeconds = Math.floor((elapsedTime / 1000) % 60);
+            displayMinutes = Math.floor((elapsedTime / (1000 * 60)) % 60);
+            displayHours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);
+
+            display.textContent = 
+                (displayHours < 10 ? '0' : '') + displayHours + ':' + 
+                (displayMinutes < 10 ? '0' : '') + displayMinutes + ':' + 
+                (displaySeconds < 10 ? '0' : '') + displaySeconds + ':' + 
+                (displayMilliseconds < 100 ? '0' : '') + (displayMilliseconds < 10 ? '0' : '') + displayMilliseconds;
+        }
+
+        // Function to save lap time
+        function saveLap() {
+            const lapTime = elapsedTime;
+            const previousLapTime = lapTimes.length > 0 ? lapTimes[lapTimes.length - 1] : 0;
+            const lapTotal = lapTime;
+            const lapDiff = lapTime - previousLapTime;
+
+            lapTimes.push(lapTime);
+            localStorage.setItem('lapTimes', JSON.stringify(lapTimes)); // Save lap times to localStorage
+
+            const lapRow = document.createElement('tr');
+            lapRow.innerHTML = `
+                <td class="lapCell">#${lapTimes.length}</td>
+                <td class="totalTime">${formatTime(lapTotal)}</td>
+                <td class="lapTime">${formatTime(lapDiff)}</td>
+            `;
+            lapsTable.appendChild(lapRow);
+        }
+
+        // Function to clear lap times
+        function clearLaps() {
+            lapTimes = [];
+            lapsTable.innerHTML = ''; // Clear the laps display
+            localStorage.removeItem('lapTimes'); // Clear lap times from localStorage
+        }
+
+        // Function to format elapsed time
+        function formatTime(milliseconds) {
+            const totalSeconds = Math.floor(milliseconds / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            const formatted = 
+                (minutes < 10 ? '0' : '') + minutes + ':' + 
+                (seconds < 10 ? '0' : '') + seconds + ':' + 
+                (milliseconds % 1000 < 100 ? '0' : '') + (milliseconds % 1000 < 10 ? '0' : '') + (milliseconds % 1000);
+            return formatted;
+        }
+
+        // Function to load lap times from localStorage on page load
+        function loadLapTimes() {
+            lapTimes.forEach((lapTime, index) => {
+                const lapRow = document.createElement('tr');
+                lapRow.innerHTML = `
+                    <td class="lapCell">#${index + 1}</td>
+                    <td class="totalTime">${formatTime(lapTime)}</td>
+                    <td class="lapTime">${formatTime(lapTime - (lapTimes[index - 1] || 0))}</td>
+                `;
+                lapsTable.appendChild(lapRow);
+            });
+        }
+
+        // Event listeners
+        startPauseButton.addEventListener('click', startPauseStopwatch);
+        resetButton.addEventListener('click', resetStopwatch);
+        lapButton.addEventListener('click', saveLap);
+        clearLapsButton.addEventListener('click', clearLaps);
+        
+        // Load lap times on page load
+        loadLapTimes();
+    </script>
+</body>
+</html>
