@@ -3,320 +3,388 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stopwatch with Rectangle</title>
+    <title>Divya Construction Dashboard</title>
     <style>
-        * {
+        /* Base Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: black; /* Set background color of body to black */
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            color: white; /* Set default text color for the body to white */
         }
-
-        body {
-            background-color: #0A1F44; /* Dark Blue Background */
-            color: white;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-        }
-
-        .navbar {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 20px; /* Space between buttons */
-        }
-
-        .navbar button {
-            font-size: 22px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            color: white;
-        }
-
-        .navbar #stopwatchBtn {
-            background-color: #28a745; /* Green for Stopwatch */
-        }
-
-        .navbar #savedLapsBtn {
-            background-color: #007bff; /* Blue for Saved Laps */
-        }
-
-        .navbar #aboutBtn {
-            background-color: #ffc107; /* Yellow for About */
-        }
-
-        .rectangle {
-            width: 600px; /* Adjust width as needed */
-            height: 200px; /* Adjust height as needed */
-            border: 10px solid transparent; /* Set a border if needed */
-            border-radius: 15px; /* Rounded corners */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-image: linear-gradient(135deg, #ff595e, #ffca3a, #8ac926, #1982c4, #6a4c93); /* Gradient background */
-            margin-bottom: 20px;
-        }
-
-        #display {
-            font-size: 60px;
+        h1 {
+            text-align: center;
+            padding: 20px;
+            color: red;
+            font-size: 3em;
             font-weight: bold;
-            color: black; /* Black color for the time display */
-            letter-spacing: 2px;
+            text-transform: uppercase;
         }
-
-        .buttons {
-            margin-top: 20px;
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 20px;
         }
-
-        .buttons button {
-            margin: 10px 15px;
-            padding: 15px 30px;
-            font-size: 24px;
-            border: none;
-            color: white;
-            cursor: pointer;
+        .card {
+            padding: 20px;
             border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: black; /* Set background color for cards to black */
+            color: white; /* Default text color for cards */
+            border: 2px solid white; /* Add white border to cards */
         }
-
-        #startPause {
-            background-color: #28a745; /* Green for Start/Pause */
+        .card h3 {
+            margin: 0;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-transform: uppercase;
         }
-
-        #reset {
-            background-color: #dc3545; /* Red for Reset */
+        .card p {
+            margin: 10px 0;
+            font-size: 2em;
+            font-weight: bold;
         }
-
-        #lap {
-            background-color: #007bff; /* Blue for +Lap */
+        .chart, .map {
+            grid-column: span 2; /* This allows both the chart and map to take two columns */
+            height: 400px; /* Height for the map and chart */
         }
-
-        #clearLaps {
-            background-color: #ffc107; /* Yellow for Clear Laps */
+        .health-table, .project-table {
+            grid-column: span 4;
+            overflow-x: auto;
+            background-color: black; /* Set background color for the table */
+            color: white; /* Set text color for the table */
         }
-
-        .buttons button:hover {
-            opacity: 0.85;
-        }
-
-        .laps {
-            margin-top: 40px;
-            width: 80%;
-            overflow-y: auto;
-            max-height: 300px; /* Fixes height for lap list to prevent shrinking */
-        }
-
         table {
             width: 100%;
-            margin: 0 auto;
             border-collapse: collapse;
-            font-size: 20px;
         }
-
-        table, th, td {
-            border: 1px solid white;
-        }
-
-        th, td {
+        table th, table td {
             padding: 10px;
+            border: 1px solid #ddd;
+            color: white; /* Ensures table text is white */
+        }
+        .progress-bar {
+            height: 20px;
+            background-color: lightgray;
+            border-radius: 5px;
+        }
+        .progress-bar div {
+            height: 100%;
+            background-color: green;
+            border-radius: 5px;
+        }
+        .dropdown {
+            grid-column: span 4;
             text-align: center;
         }
-
-        /* Updated colors for the header */
-        th.lap {
-            background-color: #ffca3a; /* Yellow for Lap */
-            color: black;
+        .dropdown select {
+            padding: 10px;
+            font-size: 1.2em;
+            margin-bottom: 20px;
         }
 
-        th.totalTime {
-            background-color: #28a745; /* Green for Total Time */
-            color: white;
+        /* Updated styles for specific cards */
+        .finance-overview {
+            padding: 20px;
+            height: 150px; /* Minimized height for finance overview */
+            grid-column: span 4; /* Maximize width by spanning all columns */
+            background-color: black; /* Ensure the finance overview background is black */
+            border: 2px solid white; /* Add white border */
+        }
+          /* Feedback Card Styles */
+          .card.feedback {
+            grid-column: span 2; /* Adjust to take up two columns */
+            background-color: black; /* Set background to black */
+            color: white; /* Set text color to white */
+            border: 2px solid white; /* White border for the card */
+            padding: 20px; /* Padding for the card */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center align items */
+            justify-content: center; /* Center vertically */
         }
 
-        th.lapTime {
-            background-color: #007bff; /* Blue for Lap Time */
-            color: white;
+        /* Feedback Box */
+        .feedback-box {
+            margin: 10px 0;
+            width: 100%; /* Maximize width */
+            display: flex;
+            justify-content: center; /* Center horizontally */
         }
 
-        .lapCell {
-            background-color: #ffca3a; /* Yellow for Lap Number */
-            color: black;
+        /* Feedback Textarea Styles */
+        #feedback-text {
+            width: 90%; /* Maximize width */
+            height: 100px; /* Increase height */
+            padding: 10px; /* Padding for the textarea */
+            border: 1px solid #ddd; /* Add border to the textarea */
+            border-radius: 5px; /* Rounded corners */
+            background-color: #222; /* Darker background for textarea */
+            color: white; /* White text */
         }
 
-        .totalTime {
-            background-color: #28a745; /* Green for Total Time */
-            color: white;
+
+      
+
+         /* Submit Button Styles */
+         #submit-button {
+            background-color: red; /* Red background for the button */
+            color: white; /* White text for the button */
+            border: none; /* Remove default border */
+            padding: 10px 15px; /* Padding for the button */
+            cursor: pointer; /* Change cursor to pointer */
+            margin-top: 10px; /* Space above the button */
         }
 
-        .lapTime {
-            background-color: #007bff; /* Blue for Lap Time */
-            color: white;
+        /* Button Hover Effect */
+        #submit-button:hover {
+            background-color: darkred; /* Darker red on hover */
         }
-
-        #saveLaps {
-            margin-top: 10px;
-            padding: 15px 30px;
-            background-color: #333;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 10px;
-        }
-
-        #saveLaps:hover {
-            background-color: #555;
         }
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <button id="stopwatchBtn" class="active">Stopwatch</button>
-        <button id="savedLapsBtn">Saved Laps</button>
-        <button id="aboutBtn">About</button>
+    <h1>Divya Construction Dashboard</h1>
+
+    <!-- Project Selector -->
+    <div class="dropdown">
+        <label for="project-selector">Select Project:</label>
+        <select id="project-selector" onchange="updateProjectData()">
+            <option value="project1">Project 1</option>
+            <option value="project2">Project 2</option>
+            <option value="project3">Project 3</option>
+            <option value="project4">Project 4</option>
+            <option value="project5">Project 5</option>
+        </select>
     </div>
 
-    <div class="rectangle">
-        <div id="display">00:00:000</div>
+    <div class="dashboard">
+        <!-- Overview Cards -->
+        <div class="card total-projects">
+            <h3>Total Projects</h3>
+            <p>5</p>
+        </div>
+        <div class="card budget">
+            <h3>Program Budget</h3>
+            <p id="program-budget">$7.2m</p>
+        </div>
+        <div class="card committed">
+            <h3>Committed to Date</h3>
+            <p id="committed-to-date">$4.2m</p>
+        </div>
+        <div class="card variance">
+            <h3>Variance to Budget</h3>
+            <p id="variance-to-budget">-$1.1m</p>
+        </div>
+
+        <!-- Map with image -->
+        <div class="card map">
+            <h3>Project Locations</h3>
+            <img src="https://th.bing.com/th/id/OIP.YKnkExVLPcwgrw9clVdbkgHaEt?w=248&h=180&c=7&r=0&o=5&pid=1.7" alt="Project Locations Map" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+
+        <!-- Donut Chart -->
+        <div class="card chart">
+            <h3>Project Phases</h3>
+            <canvas id="phaseChart"></canvas>
+        </div>
+
+        <!-- Finance Overview -->
+        <div class="card finance-overview">
+            <h3>Finance Overview</h3>
+            <div>Total Program Budget: <span id="total-program-budget">$7.3m</span></div>
+            <div>Committed to Date: <span id="finance-committed">$4.2m</span></div>
+            <div>Variance: <span id="finance-variance">-$1.1m</span></div>
+            <div>Remaining Budget: <span id="remaining-budget">$3.1m</span></div>
+            <div>Projected End Date: <span id="projected-end-date">December 31, 2024</span></div>
+            <div>Risk Level: <span id="risk-level">Moderate</span></div>
+            <div>Progress: <span id="progress-percentage">60%</span>
+                <div class="progress-bar"><div id="progress-bar-fill" style="width: 60%;"></div></div>
+            </div>
+        </div>
+
+        <!-- Project Table -->
+        <div class="card project-table">
+            <h3>Project Overview</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>End Date</th>
+                        <th>Budget</th>
+                        <th>Committed</th>
+                        <th>Progress</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Project 1</td>
+                        <td>12/31/2024</td>
+                        <td>$1,000,000</td>
+                        <td>$500,000</td>
+                        <td><div class="progress-bar"><div style="width: 50%; background-color: blue;"></div></div></td>
+                    </tr>
+                    <tr>
+                        <td>Project 2</td>
+                        <td>12/31/2024</td>
+                        <td>$1,500,000</td>
+                        <td>$700,000</td>
+                        <td><div class="progress-bar"><div style="width: 46.67%; background-color: blue;"></div></div></td>
+                    </tr>
+                    <tr>
+                        <td>Project 3</td>
+                        <td>12/31/2024</td>
+                        <td>$2,000,000</td>
+                        <td>$1,000,000</td>
+                        <td><div class="progress-bar"><div style="width: 50%; background-color: blue;"></div></div></td>
+                    </tr>
+                    <tr>
+                        <td>Project 4</td>
+                        <td>12/31/2024</td>
+                        <td>$2,500,000</td>
+                        <td>$1,200,000</td>
+                        <td><div class="progress-bar"><div style="width: 48%; background-color: blue;"></div></div></td>
+                    </tr>
+                    <tr>
+                        <td>Project 5</td>
+                        <td>12/31/2024</td>
+                        <td>$3,000,000</td>
+                        <td>$1,500,000</td>
+                        <td><div class="progress-bar"><div style="width: 50%; background-color: blue;"></div></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Additional Cash Flow Chart -->
+        <div class="card chart">
+            <h3>Additional Cash Flow</h3>
+            <canvas id="additionalCashFlowChart"></canvas>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="card feedback">
+            <h3>Feedback</h3>
+            <div class="feedback-box">
+                <textarea id="feedback-text" rows="4" placeholder="Enter your feedback here..."></textarea>
+            </div>
+            <button id="submit-button" onclick="submitFeedback()">Submit</button>
+            <p id="response-message" style="display:none; color: yellow;">Your response has been submitted!</p>
+        </div>
     </div>
 
-    <div class="buttons">
-        <button id="startPause">Start</button>
-        <button id="reset">Reset</button>
-        <button id="lap">+Lap</button>
-        <button id="clearLaps">Clear Laps</button>
-    </div>
-
-    <div class="laps">
-        <table id="lapsTable">
-            <thead>
-                <tr>
-                    <th class="lap">Lap</th>
-                    <th class="totalTime">Total Time</th>
-                    <th class="lapTime">Lap Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Lap times will be inserted here dynamically -->
-            </tbody>
-        </table>
-        <button id="saveLaps">Save Laps</button>
-    </div>
-
+    <!-- JavaScript for Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        let timer;
-        let startTime;
-        let elapsedTime = 0;
-        let isRunning = false;
-        let lapTimes = JSON.parse(localStorage.getItem('lapTimes')) || [];
-        const display = document.getElementById('display');
-        const startPauseButton = document.getElementById('startPause');
-        const lapButton = document.getElementById('lap');
-        const resetButton = document.getElementById('reset');
-        const clearLapsButton = document.getElementById('clearLaps');
-        const lapsTable = document.getElementById('lapsTable').getElementsByTagName('tbody')[0];
-
-        // Function to start or pause the stopwatch
-        function startPauseStopwatch() {
-            if (!isRunning) {
-                startTime = Date.now() - elapsedTime;
-                timer = setInterval(updateDisplay, 10);
-                isRunning = true;
-                startPauseButton.textContent = 'Pause';
-            } else {
-                clearInterval(timer);
-                isRunning = false;
-                startPauseButton.textContent = 'Start';
+        const projectData = {
+            project1: {
+                budget: "$7.3m",
+                committed: "$4.2m",
+                variance: "-$1.1m",
+                progress: 60,
+                phases: [30, 25, 20, 25] // Example phases data
+            },
+            project2: {
+                budget: "$6.5m",
+                committed: "$3.5m",
+                variance: "-$1.0m",
+                progress: 50,
+                phases: [20, 30, 30, 20]
+            },
+            project3: {
+                budget: "$5.5m",
+                committed: "$2.0m",
+                variance: "-$0.5m",
+                progress: 70,
+                phases: [25, 35, 15, 25]
+            },
+            project4: {
+                budget: "$4.5m",
+                committed: "$1.5m",
+                variance: "-$0.5m",
+                progress: 40,
+                phases: [40, 20, 20, 20]
+            },
+            project5: {
+                budget: "$3.5m",
+                committed: "$1.0m",
+                variance: "-$0.2m",
+                progress: 30,
+                phases: [20, 20, 30, 30]
             }
+        };
+
+        // Donut Chart for Project Phases
+        const ctxPhase = document.getElementById('phaseChart').getContext('2d');
+        const phaseChart = new Chart(ctxPhase, {
+            type: 'doughnut',
+            data: {
+                labels: ['Phase 1', 'Phase 2', 'Phase 3', 'Phase 4'],
+                datasets: [{
+                    label: 'Project Phases',
+                    data: projectData.project1.phases,
+                    backgroundColor: ['red', 'yellow', 'blue', 'green'],
+                    hoverOffset: 4
+                }]
+            }
+        });
+
+        // Bar Chart for Additional Cash Flow
+        const ctxCashFlow = document.getElementById('additionalCashFlowChart').getContext('2d');
+        const cashFlowChart = new Chart(ctxCashFlow, {
+            type: 'bar',
+            data: {
+                labels: ['January', 'February', 'March', 'April'],
+                datasets: [{
+                    label: 'Cash Flow',
+                    data: [12000, 15000, 11000, 18000], // Example data
+                    backgroundColor: 'lightblue'
+                }]
+            }
+        });
+
+        // Function to Update Project Data
+        function updateProjectData() {
+            const selectedProject = document.getElementById('project-selector').value;
+            const data = projectData[selectedProject];
+
+            // Update Text Values
+            document.getElementById('program-budget').textContent = data.budget;
+            document.getElementById('committed-to-date').textContent = data.committed;
+            document.getElementById('variance-to-budget').textContent = data.variance;
+            document.getElementById('total-program-budget').textContent = data.budget;
+            document.getElementById('finance-committed').textContent = data.committed;
+            document.getElementById('finance-variance').textContent = data.variance;
+            document.getElementById('remaining-budget').textContent = "$" + (parseFloat(data.budget.replace('$', '')) - parseFloat(data.committed.replace('$', ''))).toFixed(1) + "m";
+            document.getElementById('projected-end-date').textContent = "December 31, 2024"; // Example date
+            document.getElementById('risk-level').textContent = "Moderate"; // Example risk level
+            document.getElementById('progress-percentage').textContent = data.progress + "%"; // Update progress percentage
+            
+            // Update Progress Bar
+            document.getElementById('progress-bar-fill').style.width = data.progress + "%";
+
+            // Update Chart Data
+            phaseChart.data.datasets[0].data = data.phases;
+            phaseChart.update();
         }
 
-        // Function to reset the stopwatch
-        function resetStopwatch() {
-            clearInterval(timer);
-            elapsedTime = 0;
-            isRunning = false;
-            display.textContent = '00:00:000'; // Reset display to 00:00:000
-            startPauseButton.textContent = 'Start'; // Reset button text
-            clearLaps(); // Clear laps when reset
-            localStorage.removeItem('lapTimes'); // Remove lap times from localStorage
+        // Function to handle feedback submission
+        function submitFeedback() {
+            const feedbackText = document.getElementById('feedback-text').value;
+            const responseMessage = document.getElementById('response-message');
+
+            // Basic validation to check if feedback is not empty
+            if (feedbackText.trim() === "") {
+                alert("Please enter your feedback before submitting.");
+                return;
+            }
+
+            // Show response message
+            responseMessage.style.display = "block";
+            document.getElementById('feedback-text').value = ""; // Clear the text area
         }
-
-        // Function to update the display
-        function updateDisplay() {
-            elapsedTime = Date.now() - startTime;
-            displayMilliseconds = Math.floor(elapsedTime % 1000);
-            displaySeconds = Math.floor((elapsedTime / 1000) % 60);
-            displayMinutes = Math.floor((elapsedTime / (1000 * 60)) % 60);
-            displayHours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);
-
-            display.textContent = 
-                (displayHours < 10 ? '0' : '') + displayHours + ':' + 
-                (displayMinutes < 10 ? '0' : '') + displayMinutes + ':' + 
-                (displaySeconds < 10 ? '0' : '') + displaySeconds + ':' + 
-                (displayMilliseconds < 100 ? '0' : '') + (displayMilliseconds < 10 ? '0' : '') + displayMilliseconds;
-        }
-
-        // Function to save lap time
-        function saveLap() {
-            const lapTime = elapsedTime;
-            const previousLapTime = lapTimes.length > 0 ? lapTimes[lapTimes.length - 1] : 0;
-            const lapTotal = lapTime;
-            const lapDiff = lapTime - previousLapTime;
-
-            lapTimes.push(lapTime);
-            localStorage.setItem('lapTimes', JSON.stringify(lapTimes)); // Save lap times to localStorage
-
-            const lapRow = document.createElement('tr');
-            lapRow.innerHTML = `
-                <td class="lapCell">#${lapTimes.length}</td>
-                <td class="totalTime">${formatTime(lapTotal)}</td>
-                <td class="lapTime">${formatTime(lapDiff)}</td>
-            `;
-            lapsTable.appendChild(lapRow);
-        }
-
-        // Function to clear lap times
-        function clearLaps() {
-            lapTimes = [];
-            lapsTable.innerHTML = ''; // Clear the laps display
-            localStorage.removeItem('lapTimes'); // Clear lap times from localStorage
-        }
-
-        // Function to format elapsed time
-        function formatTime(milliseconds) {
-            const totalSeconds = Math.floor(milliseconds / 1000);
-            const minutes = Math.floor(totalSeconds / 60);
-            const seconds = totalSeconds % 60;
-            const formatted = 
-                (minutes < 10 ? '0' : '') + minutes + ':' + 
-                (seconds < 10 ? '0' : '') + seconds + ':' + 
-                (milliseconds % 1000 < 100 ? '0' : '') + (milliseconds % 1000 < 10 ? '0' : '') + (milliseconds % 1000);
-            return formatted;
-        }
-
-        // Function to load lap times from localStorage on page load
-        function loadLapTimes() {
-            lapTimes.forEach((lapTime, index) => {
-                const lapRow = document.createElement('tr');
-                lapRow.innerHTML = `
-                    <td class="lapCell">#${index + 1}</td>
-                    <td class="totalTime">${formatTime(lapTime)}</td>
-                    <td class="lapTime">${formatTime(lapTime - (lapTimes[index - 1] || 0))}</td>
-                `;
-                lapsTable.appendChild(lapRow);
-            });
-        }
-
-        // Event listeners
-        startPauseButton.addEventListener('click', startPauseStopwatch);
-        resetButton.addEventListener('click', resetStopwatch);
-        lapButton.addEventListener('click', saveLap);
-        clearLapsButton.addEventListener('click', clearLaps);
-        
-        // Load lap times on page load
-        loadLapTimes();
     </script>
 </body>
 </html>
